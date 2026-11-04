@@ -30,6 +30,12 @@ Cada tarefa é representada pelos seguintes campos:
 | `descricao` | Descrição da tarefa acadêmica. |
 | `data` | Data de entrega, quando informada ou identificável. |
 
+## Organização e tratamento de erros
+
+O fluxo foi dividido em responsabilidades independentes: `main.py` captura a entrada e apresenta o resultado; `config.py` carrega e valida a configuração; `services/llm.py` prepara o prompt, chama o modelo e valida a resposta; `services/files.py` cuida da persistência; e `services/errors.py` define erros esperados.
+
+Entradas vazias são rejeitadas antes da chamada ao modelo. Configuração ou credencial ausente, credencial inválida, indisponibilidade, falha de comunicação, timeout e resposta inesperada são convertidos em mensagens compreensíveis, sem exibir detalhes técnicos ou segredos.
+
 ## Como executar
 
 ### 1. Clonar o repositório
@@ -49,10 +55,16 @@ O comando cria o ambiente virtual e instala as dependências declaradas no `pypr
 
 ### 3. Configurar as variáveis de ambiente
 
-Crie um arquivo `.env` na raiz do projeto:
+Copie o exemplo e configure o arquivo `.env` na raiz:
 
 ```env
-MODEL=gemini-3.5-flash-lite
+cp .env.example .env
+```
+
+Edite o `.env`:
+
+```env
+MODEL=gemini-2.0-flash
 PROVIDER=google_genai
 GOOGLE_API_KEY=sua_chave_de_api
 ```
@@ -78,10 +90,6 @@ Para cadastrar uma tarefa, basta descrever a atividade em linguagem natural. O m
 ## Persistência dos dados
 
 As tarefas são armazenadas localmente no arquivo `tarefas.txt`, utilizando o formato JSON Lines. Cada linha representa uma tarefa independente, permitindo adicionar novos registros sem sobrescrever os anteriores.
-
-## Objetivo acadêmico
-
-Este projeto faz parte do P0 — Primeiro fluxo com LLM. Seu desenvolvimento tem como objetivo explorar a integração programática com modelos de linguagem, o uso de saídas estruturadas, a organização de aplicações Python e a construção de uma solução funcional para um problema textual real.
 
 
 ## OBS
