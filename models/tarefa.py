@@ -4,4 +4,4 @@ from pydantic import BaseModel
 class Tarefa(BaseModel):
     materia: str
     descricao: str
-    data: date | None
+    data: date | None = None
