@@ -2,6 +2,7 @@ from services.llm import create_task
 from services.files import show_tasks
 from services.errors import TaskMindError
 
+
 def main():
     while True:
         print("\n--- TASKMIND ---")
@@ -24,7 +25,9 @@ def main():
             except TaskMindError as error:
                 print(f"\nNão foi possível cadastrar a tarefa: {error}")
             except Exception:
-                print("\nOcorreu um erro inesperado. Tente novamente ou procure o responsável pelo sistema.")
+                print(
+                    "\nOcorreu um erro inesperado. Tente novamente ou procure o responsável pelo sistema."
+                )
 
         elif option == "2":
             try:

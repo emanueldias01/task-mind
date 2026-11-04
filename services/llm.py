@@ -14,6 +14,7 @@ from services.errors import (
 )
 from services.files import save_tarefa
 
+
 def prepare_prompt(description: str, current_date: date | None = None) -> str:
     current_date = current_date or date.today()
     return f"""
@@ -42,7 +43,9 @@ def build_model(config: AppConfig):
         raise _classify_llm_error(error) from error
 
 
-def request_task(description: str, config: AppConfig, model_factory: Callable = build_model) -> Tarefa:
+def request_task(
+    description: str, config: AppConfig, model_factory: Callable = build_model
+) -> Tarefa:
     """Prepara a solicitação, chama o LLM e valida sua resposta."""
     if not description.strip():
         raise InputError("A descrição da tarefa não pode ficar vazia.")
@@ -50,7 +53,9 @@ def request_task(description: str, config: AppConfig, model_factory: Callable = 
         model = model_factory(config).with_structured_output(Tarefa)
         response = model.invoke(prepare_prompt(description))
     except Exception as error:
-        if isinstance(error, (CredentialError, ServiceUnavailableError, CommunicationError)):
+        if isinstance(
+            error, (CredentialError, ServiceUnavailableError, CommunicationError)
+        ):
             raise
         raise _classify_llm_error(error) from error
 
@@ -66,7 +71,11 @@ def request_task(description: str, config: AppConfig, model_factory: Callable = 
     raise ResponseError("O serviço respondeu sem uma tarefa válida.")
 
 
-def create_task(description: str, config: AppConfig | None = None, model_factory: Callable = build_model) -> Tarefa:
+def create_task(
+    description: str,
+    config: AppConfig | None = None,
+    model_factory: Callable = build_model,
+) -> Tarefa:
     if not description.strip():
         raise InputError("A descrição da tarefa não pode ficar vazia.")
     config = config or load_config()
@@ -81,10 +90,25 @@ def _classify_llm_error(error: Exception) -> Exception:
     message = str(error).lower()
     error_name = type(error).__name__.lower()
 
-    if "api key" in message or "credential" in message or "authentication" in message or "unauthorized" in message or "permission" in message or "auth" in error_name:
-        return CredentialError("A credencial foi recusada pelo serviço. Verifique a chave configurada e tente novamente.")
+    if (
+        "api key" in message
+        or "credential" in message
+        or "authentication" in message
+        or "unauthorized" in message
+        or "permission" in message
+        or "auth" in error_name
+    ):
+        return CredentialError(
+            "A credencial foi recusada pelo serviço. Verifique a chave configurada e tente novamente."
+        )
     if "timeout" in message or "deadline" in message:
-        return CommunicationError("O serviço demorou demais para responder. Tente novamente em instantes.")
+        return CommunicationError(
+            "O serviço demorou demais para responder. Tente novamente em instantes."
+        )
     if any(term in message for term in ("unavailable", "overloaded", "503", "404")):
-        return ServiceUnavailableError("O modelo escolhido está indisponível no momento. Tente novamente mais tarde.")
-    return CommunicationError("Não foi possível comunicar com o serviço de IA. Verifique sua conexão e tente novamente.")
+        return ServiceUnavailableError(
+            "O modelo escolhido está indisponível no momento. Tente novamente mais tarde."
+        )
+    return CommunicationError(
+        "Não foi possível comunicar com o serviço de IA. Verifique sua conexão e tente novamente."
+    )
