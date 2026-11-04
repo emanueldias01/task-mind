@@ -1,2 +1,3 @@
 {"materia":"machine learning","descricao":"tarefa de machine learning valendo nota","data":"2023-11-06"}
 {"materia":"Sistemas Distribuídos","descricao":"Trabalho de k8s","data":null}
+{"materia":"IHC","descricao":"tarefa de IHC pra entregar nesse domingo","data":"2026-11-08"}
