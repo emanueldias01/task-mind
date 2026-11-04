@@ -1,28 +1,28 @@
-from services.llm import model
-from models.tarefa import Tarefa
-from services.files import save_tarefa
+from services.llm import create_task
+from services.files import show_tasks
 
 def main():
-    output_structured = model.with_structured_output(Tarefa)
+    while True:
+        print("\n--- TASKMIND ---")
+        print("1 - Cadastrar tarefa")
+        print("2 - Listar tarefas")
+        print("3 - Sair")
 
-    print("---TASKMIND---")
-    print("Descreva sua tarefa:")
+        option = input("\nEscolha uma opção: ")
 
-    description = input("-> ")
+        if option == "1":
+            create_task()
 
-    task = output_structured.invoke(
-    f"""
-        Extraia as informações da seguinte tarefa acadêmica:
-        {description}
+        elif option == "2":
+            show_tasks()
 
-        Se não houver uma data explícita, retorne null.
-        Não invente informações.
-        """
-    )
+        elif option == "3":
+            print("\nEncerrando TaskMind...")
+            break
 
-    save_tarefa(task)
+        else:
+            print("\nOpção inválida. Tente novamente.")
 
-    print(f"Tarefa salva: {task}")
 
 if __name__ == "__main__":
     main()
